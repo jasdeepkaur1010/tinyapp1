@@ -106,7 +106,14 @@ app.get("/register", (req, res) => {
   // res.send("successful");
 });
 
+const emailExists = function(email) {
+  return Object.values(users).some(user => user.email === email);
+}
+
 app.post("/register", (req, res) => {
+  if(!req.body.email || !req.body.password || emailExists(req.body.email)) {
+    return res.status(400).send("invalid email or password"); 
+ }
   const userEmail = req.body.email;
   const userPassword = req.body.password;
   const userID = generateRandomString();
@@ -116,14 +123,6 @@ app.post("/register", (req, res) => {
     password: userPassword
   };
   res.cookie("user_id", userID);
-
-  // const user = {};
-  // user.id = generateRandomString();
-  // const user_id = req.body.email;
-  // res.cookie('email', user_id);
-  // user.user_id = req.cookies["email"];
-  // console.log(user);
-  // const templateVars = { user };
   res.redirect("/urls");
 })
 app.listen(PORT, () => {
