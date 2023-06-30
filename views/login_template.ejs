@@ -15,21 +15,21 @@
       crossorigin="anonymous"
     />
 
-    <title>Register New User</title>
+    <title>Login</title>
   </head>
 
   <body>
     <%- include('partials/_header') %>
 
     <main style="margin: 1em;">
-      <h1>Create Account</h1>
-      <h6>Email Address</h6>
-      <form method="POST" action = "/register">
-        <input type="email" name="email" placeholder="Enter email">
+      <!-- <h3>Registration form</h3> -->
+      <form method="POST" action = "/login">
+        <h6>Email Address</h6>
+        <input type="email" name="email" placeholder="Email">
         <h6>Password</h6>
         <input type="password" name="password" placeholder="Password">
         <h6></h6>
-        <input type="submit" value="Register">
+        <input type="submit" value="Login">
       </form>
       <!-- <form class="form-inline" action="/urls" method="POST">
         <div class="form-group mb-2">
