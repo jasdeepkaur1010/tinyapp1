@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
+const { getUserByEmail } = require('./helpers');
 const app = express();
 const PORT = 8080; // default port 8080
 app.use(cookieSession({
@@ -62,11 +63,6 @@ function urlsForUser(id) {
 
 const emailExists = function (email) {
   return Object.values(users).some(user => user.email === email);
-}
-
-function getUserByEmail(email) {
-  const user = Object.values(users).find(user => user.email === email);
-  return user;
 };
 
 app.use(express.urlencoded({ extended: true }));
@@ -199,11 +195,10 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const inputtedEmail = req.body.email;
   const inputtedPassword = req.body.password;
-  const user = getUserByEmail(inputtedEmail);
+  const user = getUserByEmail(inputtedEmail, users);
   if (user) {
     if (bcrypt.compareSync(inputtedPassword, user.password)) {
       req.session.user_id = user.id;
-      // res.cookie("user_id", user.id);
       res.redirect("/urls");
     } else {
       return res.status(403).send("Invalid credentials!");
@@ -222,7 +217,6 @@ app.get("/login", (req, res) => {
 
 app.get("/logout", (req, res) => {
   req.session = null;
-  // res.clearCookie('user_id');
   res.redirect("/login");
 });
 
