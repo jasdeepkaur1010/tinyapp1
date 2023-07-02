@@ -72,7 +72,13 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const userID = req.session.user_id;
+  const user = users[userID];
+  if (user) {
+    res.redirect("/urls");
+    return;
+  }
+  res.redirect("/login");
 });
 
 app.get("/hello", (req, res) => {
@@ -85,7 +91,7 @@ app.get('/urls', (req, res) => {
   const userUrls = urlsForUser(userID);
   const templateVars = { urls: userUrls, user: users[req.session.user_id] };
   if (!user) {
-    res.send('Please <a href= "/login" >Login</a> to view your URLs!');
+    res.send('Please <a href= "/login" >Login Here</a> to view your URLs!');
     return;
   }
   res.render("urls_index", templateVars);
@@ -136,7 +142,7 @@ app.post("/urls", (req, res) => {
     res.redirect("/urls");
     return;
   }
-  res.send("Please login to shorten the URLs"); // Respond with 'Ok' (we will replace this)
+  res.send('Please <a href= "/login" >Login</a> to shorten your URLs!'); // Respond with 'Ok' (we will replace this)
 });
 
 app.get("/u/:id", (req, res) => {
@@ -153,7 +159,7 @@ app.post("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
   const user = users[userID];
   if (!user) {
-    res.send('Please login to edit the URLs.');
+    res.send('Please <a href= "/login" >Login</a> to edit your URLs!');
     return;
   }
   if (!urlDatabase[id]) {
@@ -175,7 +181,7 @@ app.post("/urls/:id/delete", (req, res) => {
   const userID = req.session.user_id;
   const user = users[userID];
   if (!user) {
-    res.send('Please login to delete the URLs.');
+    res.send('Please <a href= "/login" >Login</a> to delete your URLs!');
     return;
   }
   if (!urlDatabase[id]) {
@@ -201,7 +207,7 @@ app.post("/login", (req, res) => {
       req.session.user_id = user.id;
       res.redirect("/urls");
     } else {
-      return res.status(403).send("Invalid credentials!");
+      return res.status(403).send('Invalid credentials! Please <a href= "/login" >Try Again</a>');
     }
 
   } else {
@@ -229,7 +235,7 @@ app.post("/register", (req, res) => {
   if(!req.body.email || !req.body.password) {
     res.status(400).send("Please enter a valid email and password!");
   } else if (emailExists(req.body.email)) {
-      return res.status(400).send("This email id already registered. Please login!");
+      return res.status(400).send('This email id already registered. Please <a href= "/login" >Login</a>!');
   } else {
     const userEmail = req.body.email;
     const userPassword = req.body.password;
